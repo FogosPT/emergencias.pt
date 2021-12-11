@@ -4,9 +4,14 @@ import { connect } from 'react-redux';
 import { fetchIncidents,sortIncidents } from '../actions/clientActions';
 
 class List extends Component {
-    state = {
-        lastSort: 1,
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            lastSort: 1,
+            district: 'all',
+            concelho: 'all'
+        };
+    }
 
   componentWillMount() {
     this.props.fetchIncidents();
@@ -58,7 +63,16 @@ class List extends Component {
     })
   }
 
+  districtChange(event){
+    this.setState({district: event.target.value});
+  }
+
+  concelhoChange(event){
+    this.setState({concelho: event.target.value});
+  } 
+
   render() {
+      console.log(this.state);
     const distritos = this.props.incidents.incidents.map(item => item.district)
         .filter((value, index, self) => self.indexOf(value) === index);
 
@@ -77,7 +91,25 @@ class List extends Component {
         <option value={concelho}>{concelho}</option>
     ));
 
-    const incidents = this.props.incidents.incidents.map(incident => (
+    const incidents = this.props.incidents.incidents.map(incident => {
+        if( this.state.district !== 'all' && this.state.concelho !== 'all' ){
+
+            if(incident.district !== this.state.district || incident.concelho !== this.state.concelho){
+                return;
+            }
+        } else{
+            if(this.state.district !== 'all' ){
+                if(incident.district !== this.state.district){
+                    return;
+                }
+            } else if(this.state.concelho !== 'all'){
+                if(incident.concelho !== this.state.concelho){
+                    return;
+                }
+            }
+        }
+
+        return (
         <tr key={incident.id}>
              <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
@@ -131,24 +163,35 @@ class List extends Component {
                     {incident.aerial}
                 </p>
             </td>
-        </tr>
-    ));
+        </tr>)
+    });
+
+
     return (
         <div className="shadow-lg mx-auto bg-white mt-24 md:mt-16 h-screen">
              <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-				<div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-                <label className="block text-left">
-                    <span className="text-gray-700">Distrito</span>
-                    <select className="form-select block w-full mt-1">
-                        {distritosOptions}
-                    </select>
-                </label>
-                <label className="block text-left">
-                    <span className="text-gray-700">Concelho</span>
-                    <select className="form-select block w-full mt-1">
-                        {concelhosOptions}
-                    </select>
-                </label>
+                <div class="text-gray-700 md:flex md:items-center p-4">
+                    <div class="mb-1 md:mb-0 md:w-1/5">
+                        <label for="forms-labelLeftInputCode">Distrito</label>
+                    </div>
+                    <div class="md:w-4/5 md:flex-grow">
+                         <select className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline" placeholder="Distrito" onChange={this.districtChange.bind(this)}>
+                            <option value="all">Todos</option>
+                            {distritosOptions}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="text-gray-700 md:flex md:items-center p-4">
+                    <div class="mb-1 md:mb-0 md:w-1/5">
+                        <label for="forms-labelLeftInputCode">Concelho</label>
+                    </div>
+                    <div class="md:w-4/5 md:flex-grow">
+                         <select className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline" placeholder="Concelho" onChange={this.concelhoChange.bind(this)}>
+                            <option value="all">Todos</option>
+                            {concelhosOptions}
+                        </select>
+                    </div>
                 </div>
             </div>
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
