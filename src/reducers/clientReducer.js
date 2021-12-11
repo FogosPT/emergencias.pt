@@ -1,5 +1,5 @@
 
-import { FETCH_INCIDENTS } from '../actions/types';
+import { FETCH_INCIDENTS, FETCH_INCIDENT } from '../actions/types';
 
 const initialState = {
   incidents: [],
@@ -12,6 +12,11 @@ export default function(state = initialState, action) {
         ...state,
         incidents: action.payload
       };
+      case FETCH_INCIDENT:
+        return {
+          ...state,
+          incident: action.payload
+        };
     default:
       return state;
   }

@@ -8,6 +8,7 @@ const initialState = {
 export default function(state = initialState, action) {
   switch (action.type) {
     case OPEN_SIDEBAR:
+      console.log(action);
       return {
         ...state,
         sideBarOpen: true,

@@ -1,9 +1,6 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine, ReferenceArea,
-    ReferenceDot, Tooltip, CartesianGrid, Legend, Brush, ErrorBar, AreaChart, Area,
-    Label, LabelList } from 'recharts';
+import { LineChart, Line, XAxis, CartesianGrid, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 class SideBar extends React.Component {
     constructor(props) {
@@ -22,7 +19,6 @@ class SideBar extends React.Component {
     render() {
         let data = {};
         if(this.props.sideBarOpen.incident){
-            console.log(this.props.sideBarOpen.incident.history);        
              data = this.props.sideBarOpen.incident.history.map((history) => (
                {
                    man: history.man,
@@ -31,8 +27,16 @@ class SideBar extends React.Component {
                    date: history.created
                }
             ));
+
+            data.push( {
+                man: 0,
+                aerial: 0,
+                terrain: 0,
+                date: this.props.sideBarOpen.incident.date
+            })
+
+            data.reverse();
         }
-      
 
         return (
             <div>
@@ -65,29 +69,28 @@ class SideBar extends React.Component {
                                     <p><span>🚁</span><span>{this.props.sideBarOpen.incident.aerial}</span></p>
                                 </div>
                             </div>
-                            <div className='line-chart-wrapper' style={{ padding: 40 }}>
+                            <ResponsiveContainer className="h-10 w-full" width="100%" height="10rem"> 
                                 <LineChart
-                                    className="max-w-7xl mx-auto grid grid-cols-12 mt-3.5 text-center"
                                     data={data}
+                                    width="100%"
+                                    height="100%"
                                 >
-                                    <XAxis dataKey='man' />
-                                    <CartesianGrid stroke='#f5f5f5'/>
-                                    <Brush />
-                                    <Tooltip filterNull={false} />
-                                    <Line
-                                    type="monotone"
-                                    key="0"
-                                    dataKey="man"
-                                    stroke="#ff7300"
-                                    strokeWidth={5}
-                                    yAxisId={0}
-                                    activeDot={{ onClick: this.handleClickDot }}
-                                    onClick={this.handleLineClick}
+                                    <CartesianGrid vertical={false} />
+                                    <XAxis dataKey="date" label="Date" />
+                                    <YAxis domain={['auto', 'auto']} />
+                                    <Tooltip
+                                    wrapperStyle={{
+                                        borderColor: 'white',
+                                        boxShadow: '2px 2px 3px 0px rgb(204, 204, 204)',
+                                    }}
+                                    contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.8)' }}
+                                    labelStyle={{ fontWeight: 'bold', color: '#666666' }}
                                     />
-                                    {this.state.newLine && <Line type='monotone' key={'1'} dataKey='man' stroke='#132908' yAxisId={1} activeDot={{fill: '#132908', stroke: 'none', r: 6}}/>}
-                                    <Line type='monotone' key={'2'} dataKey='aerial' stroke='#387908' yAxisId={1} activeDot={{fill: '#387908', stroke: 'none', r: 6}}/>
+                                    <Line dataKey="man" stroke="#ff7300" dot={false} />
+                                    <Line dataKey="terrain" stroke="#666666" dot={false} />
+                                    <Line dataKey="aerial" stroke="#666666" dot={false} />
                                 </LineChart>
-                            </div>
+                            </ResponsiveContainer>
                         </div>
                     </div>
                     :''}

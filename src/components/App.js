@@ -3,7 +3,8 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link
+  Link,
+  useParams
 } from "react-router-dom";
 
 import Home from './Home';
@@ -12,7 +13,7 @@ import NavBar from './navbar';
 import { Provider } from 'react-redux';
 import store from '../store';
 import SideBar from './Sidebar';
-
+import List from './List';
 
 class App extends Component {
   render() {
@@ -23,7 +24,8 @@ class App extends Component {
             <SideBar />
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="lista" element={<Incident />} />
+              <Route exact path="/incidente/:id" element={<HomeId />}/>
+              <Route path="lista" element={<List />} />
             </Routes>
           </div>
       </Provider>
@@ -32,3 +34,8 @@ class App extends Component {
 }
 
 export default App;
+
+function HomeId() {
+  let params = useParams();
+  return <Home id={params}/>;
+}

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { fetchIncidents } from '../actions/clientActions';
+import { fetchIncidents, fetchIncident } from '../actions/clientActions';
 import { openSideBar, closeSideBar } from '../actions/sideBarActions';
 import ReactMapboxGl, { Layer, Feature, ZoomControl, ScaleControl } from 'react-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+
 
 const Map = ReactMapboxGl({
     accessToken: 'pk.eyJ1IjoiZm9nb3NwdCIsImEiOiJjamZ3Y2E5OTMyMjFnMnFxbjAxbmt3bmdtIn0.xg1X-A17WRBaDghhzsmjIA',
@@ -15,21 +16,44 @@ class Home extends Component {
     state = {
         fitBounds: undefined,
         center: [-8.96362824293375, 39.4392129215951],
-        zoom: [11],
-        incident: undefined,
+        zoom: [8],
+        incident: {},
         incidents: {},
         sideBarOpen: false
     };
 
   componentWillMount() {
     this.props.fetchIncidents();
+
+    if(this.props.id){
+        const id = this.props.id.id;
+        this.props.fetchIncident(id);
+    }
   }
   
   componentWillUnmount() {
     this.props.closeSideBar();
+
+    this.setState({
+        fitBounds: undefined,
+        center: [-8.96362824293375, 39.4392129215951],
+        zoom: [8],
+        incident: {},
+        incidents: {},
+        sideBarOpen: false
+      });
 }
 
   componentWillReceiveProps(nextProps) {
+    if(nextProps.incidents.incident){
+        this.setState({
+            center: [nextProps.sideBarOpen.incident.lng, nextProps.sideBarOpen.incident.lat],
+            zoom: [14],
+            incident: nextProps.sideBarOpen.incident,
+            sideBarOpen: true
+          });
+      
+    }
   }
   
   onToggleHover(cursor, { map }) {
@@ -45,7 +69,18 @@ class Home extends Component {
     });
 
     this.props.openSideBar(incident);
+  };
 
+  mapClick = (dispatch) => {
+    this.props.closeSideBar();
+    this.setState({
+        fitBounds: undefined,
+        center: [-8.96362824293375, 39.4392129215951],
+        zoom: [8],
+        incident: {},
+        incidents: {},
+        sideBarOpen: false
+      });
   };
 
   mapDispatchToProps = dispatch => ( {
@@ -76,6 +111,8 @@ class Home extends Component {
                 width: '100vw'
             }}
             center={this.state.center}
+            zoom={this.state.zoom}
+            onClick={this.mapClick.bind(this)}
             >
             <ScaleControl />
             <ZoomControl />
@@ -98,6 +135,7 @@ class Home extends Component {
 
 Home.propTypes = {
   fetchIncidents: PropTypes.func.isRequired,
+  fetchIncident: PropTypes.func.isRequired,
   openSideBar: PropTypes.func.isRequired,
   closeSideBar: PropTypes.func.isRequired,
   incidents: PropTypes.object.isRequired,
@@ -110,4 +148,4 @@ const mapStateToProps = state => ({
   incident: state.incident
 });
 
-export default connect(mapStateToProps, { fetchIncidents, openSideBar, closeSideBar })(Home);
+export default connect(mapStateToProps, { fetchIncidents, fetchIncident, openSideBar, closeSideBar })(Home);
