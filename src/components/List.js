@@ -1,50 +1,82 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { fetchIncidents } from '../actions/clientActions';
+import { fetchIncidents,sortIncidents } from '../actions/clientActions';
 
 class List extends Component {
+    state = {
+        lastSort: 1,
+    };
+
   componentWillMount() {
     this.props.fetchIncidents();
-    console.log( 3333,this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(222,nextProps);
   }
 
   getStatusColor(status){
     switch(status){
         case 'Chegada ao TO':
         case 'Despacho de 1º Alerta':
+        case 'Despacho':
             return 'relative inline-block px-3 py-1 font-semibold text-yellow-900 leading-tight';
         case 'Em Curso':
             return 'relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight';
         case 'Conclusão':
         case 'Em Resolução':
             return 'relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight';
+        case 'Vigilância':
+            return 'relative inline-block px-3 py-1 font-semibold text-blue-900 leading-tight';
         default:
             return 'relative inline-block px-3 py-1 font-semibold text-grey-900 leading-tight';
     }
   }
 
   getStatusColor2(status){
-      console.log(status);
     switch(status){
         case 'Chegada ao TO':
         case 'Despacho de 1º Alerta':
+        case 'Despacho':
             return 'absolute inset-0 bg-yellow-200 opacity-50 rounded-full';
         case 'Em Curso':
             return 'absolute inset-0 bg-red-200 opacity-50 rounded-full';
         case 'Conclusão':
         case 'Em Resolução':
             return 'absolute inset-0 bg-green-200 opacity-50 rounded-full';
+        case 'Vigilância':
+            return 'absolute inset-0 bg-blue-200 opacity-50 rounded-full';
         default:
             return 'absolute inset-0 bg-grey-200 opacity-50 rounded-full';
     }
   }
 
+  sortTable(field){
+    this.props.sortIncidents(field, this.state.lastSort);
+    this.setState({
+        lastSort: -1 * this.state.lastSort
+    })
+  }
+
   render() {
+    const distritos = this.props.incidents.incidents.map(item => item.district)
+        .filter((value, index, self) => self.indexOf(value) === index);
+
+    distritos.sort();
+
+    const distritosOptions = distritos.map(distrito => (
+        <option value={distrito}>{distrito}</option>
+    ));
+
+    const concelhos = this.props.incidents.incidents.map(item => item.concelho)
+        .filter((value, index, self) => self.indexOf(value) === index);
+
+    concelhos.sort();
+
+    const concelhosOptions = concelhos.map(concelho => (
+        <option value={concelho}>{concelho}</option>
+    ));
+
     const incidents = this.props.incidents.incidents.map(incident => (
         <tr key={incident.id}>
              <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -76,6 +108,11 @@ class List extends Component {
             </td>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
+                    {incident.localidade}
+                </p>
+            </td>
+            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                <p className="text-gray-900 whitespace-no-wrap">
                     {incident.natureza}
                 </p>
             </td>
@@ -98,6 +135,22 @@ class List extends Component {
     ));
     return (
         <div className="shadow-lg mx-auto bg-white mt-24 md:mt-16 h-screen">
+             <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+				<div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
+                <label className="block text-left">
+                    <span className="text-gray-700">Distrito</span>
+                    <select className="form-select block w-full mt-1">
+                        {distritosOptions}
+                    </select>
+                </label>
+                <label className="block text-left">
+                    <span className="text-gray-700">Concelho</span>
+                    <select className="form-select block w-full mt-1">
+                        {concelhosOptions}
+                    </select>
+                </label>
+                </div>
+            </div>
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
 				<div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
 					<table className="min-w-full leading-normal">
@@ -105,39 +158,43 @@ class List extends Component {
 							<tr>
                                 <th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									Início
+									<button type="button" onClick={() => this.sortTable('dateTime')}>Início</button>
 								</th>
                                 <th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									Estado
+									<button type="button" onClick={() => this.sortTable('status')}>Estado</button>
 								</th>
 								<th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									Distrito
+									<button type="button" onClick={() => this.sortTable('district')}>Distrito</button>
 								</th>
 								<th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									Concelho
+                                    <button type="button" onClick={() => this.sortTable('concelho')}>Concelho</button>
 								</th>
 								<th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									Freguesia
-								</th>
-								<th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									Natureza
-								</th>
-								<th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									👩‍🚒
+                                    <button type="button" onClick={() => this.sortTable('freguesia')}>Freguesia</button>
 								</th>
                                 <th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									🚒
+									<button type="button" onClick={() => this.sortTable('localidade')}>Localidade</button>
+								</th>
+								<th
+									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+									<button type="button" onClick={() => this.sortTable('natureza')}>Natureza</button>
+								</th>
+								<th
+									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+									<button type="button" onClick={() => this.sortTable('man')}>👩‍🚒</button>
 								</th>
                                 <th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									🚁
+									<button type="button" onClick={() => this.sortTable('terrain')}>🚒</button>
+								</th>
+                                <th
+									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+									<button type="button" onClick={() => this.sortTable('aerial')}>🚁</button>
 								</th>
 							</tr>
 						</thead>
@@ -161,4 +218,4 @@ const mapStateToProps = state => ({
   incidents: state.incidents,
 });
 
-export default connect(mapStateToProps, { fetchIncidents })(List);
+export default connect(mapStateToProps, { fetchIncidents, sortIncidents })(List);

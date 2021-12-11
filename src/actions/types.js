@@ -1,4 +1,6 @@
 export const FETCH_INCIDENTS = 'FETCH_INCIDENTS';
+export const SORT_INCIDENTS = 'SORT_INCIDENTS';
+
 export const FETCH_INCIDENT = 'FETCH_INCIDENT';
 
 
