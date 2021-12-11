@@ -47,6 +47,11 @@ class List extends Component {
   render() {
     const incidents = this.props.incidents.incidents.map(incident => (
         <tr key={incident.id}>
+             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                <p className="text-gray-900 whitespace-no-wrap">
+                    {incident.date} {incident.hour}
+                </p>
+            </td>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
                     <span className={this.getStatusColor(incident.status)}>
@@ -98,6 +103,10 @@ class List extends Component {
 					<table className="min-w-full leading-normal">
 						<thead>
 							<tr>
+                                <th
+									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+									Início
+								</th>
                                 <th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
 									Estado
