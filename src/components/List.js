@@ -15,7 +15,13 @@ class List extends Component {
 
   componentWillMount() {
     this.props.fetchIncidents();
-  }
+    const queryString = require('query-string');
+
+    const parsed = queryString.parse(window.location.search);
+    if(parsed.concelho){
+        this.setState({concelho: parsed.concelho});
+    }
+}
 
   componentWillReceiveProps(nextProps) {
   }
@@ -72,7 +78,6 @@ class List extends Component {
   } 
 
   render() {
-      console.log(this.state);
     const distritos = this.props.incidents.incidents.map(item => item.district)
         .filter((value, index, self) => self.indexOf(value) === index);
 

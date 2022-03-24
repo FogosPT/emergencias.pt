@@ -18,7 +18,6 @@ export default function(state = initialState, action) {
         incident: action.payload
       };
     case SORT_INCIDENTS:
-      console.log(action.order);
       let x = state.incidents.slice().sort(function(a, b) {
           if (a[action.field] < b[action.field]) return -1;
           if (a[action.field] < b[action.field]) return 1;

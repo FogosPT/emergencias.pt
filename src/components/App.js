@@ -4,11 +4,10 @@ import {
   Routes,
   Route,
   Link,
-  useParams
+  useParams,
+  useLocation
 } from "react-router-dom";
 
-import Home from './Home';
-import Incident from './Incident';
 import NavBar from './navbar';
 import { Provider } from 'react-redux';
 import store from '../store';
@@ -23,8 +22,7 @@ class App extends Component {
             <NavBar />
             <SideBar />
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route exact path="/incidente/:id" element={<HomeId />}/>
+              <Route path="/" element={<List />} />
               <Route path="lista" element={<List />} />
             </Routes>
           </div>
@@ -34,8 +32,3 @@ class App extends Component {
 }
 
 export default App;
-
-function HomeId() {
-  let params = useParams();
-  return <Home id={params}/>;
-}
