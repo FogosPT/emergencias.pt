@@ -128,6 +128,11 @@ class List extends Component {
                     <span className="relative">{incident.status}</span></span>
                 </p>
             </td>
+ 	    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                <p className="text-gray-900 whitespace-no-wrap">
+                    {incident.sub_regiao}
+                </p>
+            </td>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 <p className="text-gray-900 whitespace-no-wrap">
                     {incident.district}
@@ -216,6 +221,10 @@ class List extends Component {
                                 <th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
 									<button type="button" onClick={() => this.sortTable('status')}>Estado</button>
+								</th>
+								<th
+									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+									<button type="button" onClick={() => this.sortTable('sub_regiao')}>Sub região</button>
 								</th>
 								<th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
