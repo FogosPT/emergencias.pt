@@ -168,6 +168,11 @@ class List extends Component {
                     {incident.aerial}
                 </p>
             </td>
+ 	    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                <p className="text-gray-900 whitespace-no-wrap">
+                    {incident.meios_aquaticos}
+                </p>
+            </td>
         </tr>)
     });
 
@@ -243,6 +248,10 @@ class List extends Component {
                                 <th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
 									<button type="button" onClick={() => this.sortTable('aerial')}>🚁</button>
+								</th>
+								<th
+									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+									<button type="button" onClick={() => this.sortTable('meios_aquaticos')}>🏊</button>
 								</th>
 							</tr>
 						</thead>
