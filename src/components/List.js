@@ -277,7 +277,7 @@ class List extends Component {
                             <header class="flex items-center justify-between leading-tight p-2 md:p-4 place-content-center">
 
                                 <p class="text-grey-darker text-6xl text-center">
-                                    {this.state.totalBoat} 🏊
+                                    {this.state.totalBoat} 🚣
                                 </p>
                             </header>
 
@@ -366,7 +366,7 @@ class List extends Component {
 								</th>
 								<th
 									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									<button type="button" onClick={() => this.sortTable('meios_aquaticos')}>🏊</button>
+									<button type="button" onClick={() => this.sortTable('meios_aquaticos')}>🚣</button>
 								</th>
 							</tr>
 						</thead>
