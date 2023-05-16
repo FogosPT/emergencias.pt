@@ -9,7 +9,13 @@ class List extends Component {
         this.state = {
             lastSort: 1,
             district: 'all',
-            concelho: 'all'
+            concelho: 'all',
+            totalIncidents: 0,
+            totalMan: 0,
+            totalTerrain: 0,
+            totalAerial: 0,
+            totalBoat: 0
+
         };
     }
 
@@ -87,6 +93,10 @@ class List extends Component {
         <option value={distrito}>{distrito}</option>
     ));
 
+    console.log(this.state.totalIncidents);
+
+
+
     const concelhos = this.props.incidents.incidents.map(item => item.concelho)
         .filter((value, index, self) => self.indexOf(value) === index);
 
@@ -96,7 +106,19 @@ class List extends Component {
         <option value={concelho}>{concelho}</option>
     ));
 
+    this.state.totalIncidents = 0;
+    this.state.totalMan = 0;
+    this.state.totalTerrain = 0;
+    this.state.totalAerial = 0;
+    this.state.totalBoat = 0;
+
     const incidents = this.props.incidents.incidents.map(incident => {
+        this.state.totalIncidents += 1;
+        this.state.totalMan += incident.man;
+        this.state.totalTerrain += incident.terrain;
+        this.state.totalAerial += incident.aerial;
+        this.state.totalBoat += incident.meios_aquaticos;
+
         if( this.state.district !== 'all' && this.state.concelho !== 'all' ){
 
             if(incident.district !== this.state.district || incident.concelho !== this.state.concelho){
@@ -184,6 +206,90 @@ class List extends Component {
 
     return (
         <div className="shadow-lg mx-auto bg-white mt-24 md:mt-16 h-screen">
+            <div className="container my-12 mx-auto px-4 md:px-12">
+                <div className="flex flex-wrap -mx-1 lg:-mx-4">
+                    <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/5">
+                        <div class="overflow-hidden rounded-lg shadow-lg">
+                            <header class="flex items-center justify-between leading-tight p-2 md:p-4 place-content-center">
+
+                                <p class="text-grey-darker text-6xl text-center">
+                                    {this.state.totalIncidents} 🚨
+                                </p>
+                            </header>
+
+                            <footer class="flex items-center justify-between leading-none p-2 md:p-4 place-content-center">
+                               <p className="text-center text-sm">Total Ocorrências</p>
+                            </footer>
+
+                        </div>
+                    </div>
+
+                    <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/5">
+                        <div class="overflow-hidden rounded-lg shadow-lg">
+                            <header class="flex items-center justify-between leading-tight p-2 md:p-4 place-content-center">
+
+                                <p class="text-grey-darker text-6xl text-center">
+                                    {this.state.totalMan} 👨‍🚒
+                                </p>
+                            </header>
+
+                            <footer class="flex items-center justify-between leading-none p-2 md:p-4 place-content-center">
+                                <p className="text-center text-sm">Total Operacionais</p>
+                            </footer>
+
+                        </div>
+                    </div>
+
+                    <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/5">
+                        <div class="overflow-hidden rounded-lg shadow-lg">
+                            <header class="flex items-center justify-between leading-tight p-2 md:p-4 place-content-center">
+
+                                <p class="text-grey-darker text-6xl text-center">
+                                    {this.state.totalTerrain} 🚒
+                                </p>
+                            </header>
+
+                            <footer class="flex items-center justify-between leading-none p-2 md:p-4 place-content-center">
+                                <p className="text-center text-sm">Total Veículos</p>
+                            </footer>
+
+                        </div>
+                    </div>
+
+                    <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/5">
+                        <div class="overflow-hidden rounded-lg shadow-lg">
+                            <header class="flex items-center justify-between leading-tight p-2 md:p-4 place-content-center">
+
+                                <p class="text-grey-darker text-6xl text-center">
+                                    {this.state.totalAerial} 🚁
+                                </p>
+                            </header>
+
+                            <footer class="flex items-center justify-between leading-none p-2 md:p-4 place-content-center">
+                                <p className="text-center text-sm">Total Aéreos</p>
+                            </footer>
+
+                        </div>
+                    </div>
+
+                    <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/5">
+                        <div class="overflow-hidden rounded-lg shadow-lg">
+                            <header class="flex items-center justify-between leading-tight p-2 md:p-4 place-content-center">
+
+                                <p class="text-grey-darker text-6xl text-center">
+                                    {this.state.totalBoat} 🏊
+                                </p>
+                            </header>
+
+                            <footer class="flex items-center justify-between leading-none p-2 md:p-4 place-content-center">
+                                <p className="text-center text-sm">Total Aquáticos</p>
+                            </footer>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
              <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                 <div class="text-gray-700 md:flex md:items-center p-4">
                     <div class="mb-1 md:mb-0 md:w-1/5">
