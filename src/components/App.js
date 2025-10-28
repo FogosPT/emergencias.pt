@@ -24,8 +24,9 @@ class App extends Component {
             <SideBar />
             <Routes>
               <Route path="/" element={<List />} />
-              <Route path="/fma" element={<FMA />} />
+              <Route path="fma" element={<FMA />} />
               <Route path="lista" element={<List />} />
+              <Route path="map" element={<Home />} />
             </Routes>
           </div>
       </Provider>

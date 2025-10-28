@@ -381,7 +381,7 @@ class FMA extends Component {
     }
 }
 
-List.propTypes = {
+FMA.propTypes = {
     fetchFMAIncidents: PropTypes.func.isRequired,
     incidents: PropTypes.object.isRequired
 };
@@ -390,4 +390,4 @@ const mapStateToProps = state => ({
     incidents: state.incidents,
 });
 
-export default connect(mapStateToProps, { fetchFMAIncidents, sortIncidents })(List);
+export default connect(mapStateToProps, { fetchFMAIncidents, sortIncidents })(FMA);
