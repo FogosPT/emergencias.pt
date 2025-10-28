@@ -26,7 +26,6 @@ class App extends Component {
               <Route path="/" element={<List />} />
               <Route path="fma" element={<FMA />} />
               <Route path="lista" element={<List />} />
-              <Route path="map" element={<Home />} />
             </Routes>
           </div>
       </Provider>
