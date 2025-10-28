@@ -28,6 +28,9 @@ class NavBar extends Component {
                         <div className="hidden md:flex items-center space-x-1"> 
                             <Link className="py-5 px-3 text-white hover:text-gray-300" to="/lista">Lista</Link>
                         </div>
+                        <div className="hidden md:flex items-center space-x-1">
+                            <Link className="py-5 px-3 text-white hover:text-gray-300" to="/fma">FMA</Link>
+                        </div>
                     </div>
                     <div className="md:hidden flex items-center"> 
                         <button className="mobile-menu-button focus:outline-none" onClick={this.addActiveClass.bind(this)}><i className='fas fa-bars bx bx-menu text-3xl mt-1'></i></button>
