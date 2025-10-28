@@ -13,6 +13,7 @@ import { Provider } from 'react-redux';
 import store from '../store';
 import SideBar from './Sidebar';
 import List from './List';
+import FMA from "./FMA";
 
 class App extends Component {
   render() {
@@ -23,7 +24,7 @@ class App extends Component {
             <SideBar />
             <Routes>
               <Route path="/" element={<List />} />
-              <Route path="/fma" element={<List />} />
+              <Route path="/fma" element={<FMA />} />
               <Route path="lista" element={<List />} />
             </Routes>
           </div>
