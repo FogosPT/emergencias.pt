@@ -4,5 +4,5 @@ import sidebarReducer from './sidebarReducer';
 
 export default combineReducers({
   incidents: clientReducer,
-  sideBarOpen: sidebarReducer
+  sideBarOpen: sidebarReducer,
 });

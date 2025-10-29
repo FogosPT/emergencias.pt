@@ -1,16 +1,14 @@
-import { createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
+// store.js
+import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 
-const initialState = {};
-
-const middleware = [thunk];
+// Isto permite usar Redux DevTools se existir, senão usa compose normal
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
-  rootReducer,
-  initialState,
-  composeWithDevTools(applyMiddleware(...middleware)),
+    rootReducer,
+    composeEnhancers(applyMiddleware(thunk))
 );
 
 export default store;

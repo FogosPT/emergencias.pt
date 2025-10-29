@@ -1,24 +1,19 @@
-
-import { OPEN_SIDEBAR, CLOSE_SIDEBAR } from '../actions/types';
+// reducers/sidebarReducer.js
+import { OPEN_SIDEBAR, CLOSE_SIDEBAR } from '../actions/sideBarActions';
 
 const initialState = {
-    sideBarOpen: false,
+  open: false,
+  incident: null,
 };
 
-export default function(state = initialState, action) {
+export default function sidebarReducer(state = initialState, action) {
   switch (action.type) {
     case OPEN_SIDEBAR:
-      console.log(action);
-      return {
-        ...state,
-        sideBarOpen: true,
-        incident: action.incident
-      };
+      console.log('[reducer] OPEN_SIDEBAR', action.payload);
+      return { open: true, incident: action.payload };
     case CLOSE_SIDEBAR:
-      return {
-        ...state,
-        sideBarOpen: false,
-      };
+      console.log('[reducer] CLOSE_SIDEBAR');
+      return { ...initialState };
     default:
       return state;
   }

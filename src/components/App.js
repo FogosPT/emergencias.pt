@@ -11,9 +11,9 @@ import {
 import NavBar from './navbar';
 import { Provider } from 'react-redux';
 import store from '../store';
-import SideBar from './Sidebar';
 import List from './List';
 import FMA from "./FMA";
+import FMAMap from "./FMAMap";
 
 class App extends Component {
   render() {
@@ -21,11 +21,11 @@ class App extends Component {
       <Provider store={store}>
         <div className="App flex flex-no-wrap">
             <NavBar />
-            <SideBar />
             <Routes>
               <Route path="/" element={<List />} />
               <Route path="fma" element={<FMA />} />
               <Route path="lista" element={<List />} />
+              <Route path="fma-mapa" element={<FMAMap />} />
             </Routes>
           </div>
       </Provider>

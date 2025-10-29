@@ -1,0 +1,30 @@
+/* components/mapLayout.css */
+
+:root {
+    --header-height: 64px; /* mesma altura da tua navbar (h-16) */
+}
+
+html, body, #root { height: 100%; }
+
+.map-shell {
+    /* empurra para baixo da navbar fixa */
+    margin-top: var(--header-height);
+    /* ocupa o resto da viewport */
+    height: calc(100vh - var(--header-height));
+    width: 100%;
+    display: flex;
+    background: #fff;
+}
+
+.map-pane { position: relative; flex: 1 1 auto; min-width: 0; }
+.map-el   { height: 100%; width: 100%; }
+
+.sidebar-pane {
+    flex: 0 0 24rem; /* 384px */
+    border-left: 1px solid #e5e7eb;
+    background: #fff;
+    overflow-y: auto;
+}
+
+.map-banner { position: absolute; top: 8px; left: 8px; background: rgba(255,255,255,.92); padding: 4px 8px; border-radius: 6px; font-size: .875rem; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.map-banner--error { background: #fef2f2; color: #b91c1c; }
