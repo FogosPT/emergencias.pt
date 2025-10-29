@@ -14,6 +14,7 @@ import store from '../store';
 import List from './List';
 import FMA from "./FMA";
 import FMAMap from "./FMAMap";
+import AllMap from "./AllMap";
 
 class App extends Component {
   render() {
@@ -26,6 +27,7 @@ class App extends Component {
               <Route path="fma" element={<FMA />} />
               <Route path="lista" element={<List />} />
               <Route path="fma-mapa" element={<FMAMap />} />
+              <Route path="mapa" element={<AllMap />} />
             </Routes>
           </div>
       </Provider>

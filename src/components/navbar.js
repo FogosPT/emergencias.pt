@@ -19,6 +19,7 @@ class NavBar extends Component {
                             </div>
                             <div className="hidden md:flex items-center space-x-1">
                                 <Link className="py-5 px-3 text-white hover:text-gray-300" to="/lista">Lista</Link>
+                                <Link className="py-5 px-3 text-white hover:text-gray-300" to="/mapa">Mapa</Link>
                                 <Link className="py-5 px-3 text-white hover:text-gray-300" to="/fma">FMA</Link>
                                 <Link className="py-5 px-3 text-white hover:text-gray-300" to="/fma-mapa">Mapa FMA</Link>
                             </div>
