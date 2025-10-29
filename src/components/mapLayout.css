@@ -28,3 +28,53 @@ html, body, #root { height: 100%; }
 
 .map-banner { position: absolute; top: 8px; left: 8px; background: rgba(255,255,255,.92); padding: 4px 8px; border-radius: 6px; font-size: .875rem; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 .map-banner--error { background: #fef2f2; color: #b91c1c; }
+
+/* DivIcon base */
+.fma-divicon {}
+
+/* Wrapper para pulse */
+.fma-pulse-wrapper {
+    position: relative;
+    width: 72px;               /* antes 36 */
+    height: 72px;
+}
+
+/* Anel de pulse */
+.fma-pulse-ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 32px;               /* antes 16 */
+    height: 32px;
+    margin-left: -16px;        /* metade de 32 */
+    margin-top: -16px;
+    border-radius: 9999px;
+    background: rgba(239, 68, 68, 0.45);
+    animation: fmaPulse 1.6s infinite ease-out;
+    transform-origin: center;
+    pointer-events: none;
+}
+@keyframes fmaPulse {
+    0%   { transform: scale(1);   opacity: 0.9; }
+    70%  { transform: scale(2.8); opacity: 0;   }
+    100% { transform: scale(2.8); opacity: 0;   }
+}
+
+/* Pin */
+.fma-pin { display: inline-flex; align-items: center; justify-content: center; }
+.fma-pin-core {
+    width: 36px;               /* antes 18 */
+    height: 36px;
+    border-radius: 9999px;
+    border: 3px solid #111827; /* ligeiramente mais grosso p/ proporção */
+    box-shadow: 0 2px 6px rgba(0,0,0,.25);
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* Tamanho do glifo (emoji/SVG) */
+.fma-pin-glyph {
+    font-size: 20px;           /* antes 12 */
+    line-height: 1;
+    transform: translateY(-0.5px);
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,.15));
+}
