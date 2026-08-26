@@ -1,7 +1,7 @@
 import React from 'react';
-import IncidentMap from './IncidentMap';
-import { fetchIncidents } from '../actions/clientActions';
+import IncidentMap from './IncidentMap.js';
+import { allIncidents } from '../store/incidentsSlice.js';
 
 export default function AllMap() {
-    return <IncidentMap sliceName="allIncidents" fetchAction={fetchIncidents} />;
+    return <IncidentMap sliceName="allIncidents" fetchAction={allIncidents.fetchThunk} />;
 }

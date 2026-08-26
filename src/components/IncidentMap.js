@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { MapContainer, TileLayer, Marker, ZoomControl, ScaleControl, useMapEvent, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-import { openSideBar, closeSideBar, normalizeIncident } from '../actions/sideBarActions';
-import FmaSideBar from './FmaSideBar';
-import { STATUS_COLORS, makeIncidentIcon } from './mapIcons';
+import { openSideBar, closeSideBar, normalizeIncident } from '../store/sidebarSlice.js';
+import FmaSideBar from './FmaSideBar.js';
+import { STATUS_COLORS, makeIncidentIcon } from './mapIcons.js';
 import './mapLayout.css';
 
 const DEFAULT_CENTER = [39.4392129215951, -8.96362824293375];

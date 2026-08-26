@@ -1,12 +1,12 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import store from '../store';
-import NavBar from './navbar';
-import List from './List';
-import FMA from './FMA';
-import FMAMap from './FMAMap';
-import AllMap from './AllMap';
+import store from '../store/index.js';
+import NavBar from './navbar.js';
+import List from './List.js';
+import FMA from './FMA.js';
+import FMAMap from './FMAMap.js';
+import AllMap from './AllMap.js';
 
 export default function App() {
     return (

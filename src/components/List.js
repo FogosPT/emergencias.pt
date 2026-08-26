@@ -1,7 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import queryString from 'query-string';
-import { fetchIncidents, sortIncidents } from '../actions/clientActions';
+import { allIncidents } from '../store/incidentsSlice.js';
+
+const { fetchThunk, slice } = allIncidents;
+const { sort } = slice.actions;
 
 const STATUS_STYLES = {
     'Chegada ao TO':        { text: 'text-yellow-900', bg: 'bg-yellow-200' },
@@ -59,7 +62,7 @@ export default function List() {
     const [concelho, setConcelho] = useState('all');
 
     useEffect(() => {
-        dispatch(fetchIncidents());
+        dispatch(fetchThunk());
         const parsed = queryString.parse(window.location.search);
         if (parsed.concelho) setConcelho(parsed.concelho);
     }, [dispatch]);
@@ -93,7 +96,7 @@ export default function List() {
     ), [filtered]);
 
     const sortTable = (field) => {
-        dispatch(sortIncidents(field, lastSort));
+        dispatch(sort({ field, order: lastSort }));
         setLastSort((s) => -1 * s);
     };
 
