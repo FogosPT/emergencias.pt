@@ -1,368 +1,203 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { fetchIncidents,sortIncidents } from '../actions/clientActions';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import queryString from 'query-string';
+import { fetchIncidents, sortIncidents } from '../actions/clientActions';
 
-class List extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            lastSort: 1,
-            district: 'all',
-            concelho: 'all',
-            totalIncidents: 0,
-            totalMan: 0,
-            totalTerrain: 0,
-            totalAerial: 0,
-            totalBoat: 0
+const STATUS_STYLES = {
+    'Chegada ao TO':        { text: 'text-yellow-900', bg: 'bg-yellow-200' },
+    'Despacho de 1º Alerta':{ text: 'text-yellow-900', bg: 'bg-yellow-200' },
+    'Despacho':             { text: 'text-yellow-900', bg: 'bg-yellow-200' },
+    'Em Curso':             { text: 'text-red-900',    bg: 'bg-red-200' },
+    'Conclusão':            { text: 'text-green-900',  bg: 'bg-green-200' },
+    'Em Resolução':         { text: 'text-green-900',  bg: 'bg-green-200' },
+    'Vigilância':           { text: 'text-blue-900',   bg: 'bg-blue-200' },
+};
 
-        };
-    }
+const statusPill = (status) => {
+    const s = STATUS_STYLES[status] || { text: 'text-gray-900', bg: 'bg-gray-200' };
+    return (
+        <span className={`relative inline-block px-3 py-1 font-semibold ${s.text} leading-tight`}>
+            <span aria-hidden="true" className={`absolute inset-0 ${s.bg} opacity-50 rounded-full`} />
+            <span className="relative">{status}</span>
+        </span>
+    );
+};
 
-  componentWillMount() {
-    this.props.fetchIncidents();
-    const queryString = require('query-string');
+const StatCard = ({ value, emoji, label }) => (
+    <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/5">
+        <div className="overflow-hidden rounded-lg shadow-lg flex md:flex-col items-center md:justify-center p-4 gap-4">
+            <div className="text-6xl">{emoji}</div>
+            <div>
+                <p className="text-6xl text-gray-800 md:text-center">{value}</p>
+                <p className="text-sm">{label}</p>
+            </div>
+        </div>
+    </div>
+);
 
-    const parsed = queryString.parse(window.location.search);
-    if(parsed.concelho){
-        this.setState({concelho: parsed.concelho});
-    }
-}
+const COLUMNS = [
+    { field: 'dateTime',        label: 'Início' },
+    { field: 'status',          label: 'Estado' },
+    { field: 'sub_regiao',      label: 'Sub região' },
+    { field: 'district',        label: 'Distrito' },
+    { field: 'concelho',        label: 'Concelho' },
+    { field: 'freguesia',       label: 'Freguesia' },
+    { field: 'localidade',      label: 'Localidade' },
+    { field: 'natureza',        label: 'Natureza' },
+    { field: 'man',             label: '👩‍🚒' },
+    { field: 'terrain',         label: '🚒' },
+    { field: 'aerial',          label: '🚁' },
+    { field: 'meios_aquaticos', label: '🚣' },
+];
 
-  componentWillReceiveProps(nextProps) {
-  }
+export default function List() {
+    const dispatch = useDispatch();
+    const { data, loading, error } = useSelector((s) => s.allIncidents);
 
-  getStatusColor(status){
-    switch(status){
-        case 'Chegada ao TO':
-        case 'Despacho de 1º Alerta':
-        case 'Despacho':
-            return 'relative inline-block px-3 py-1 font-semibold text-yellow-900 leading-tight';
-        case 'Em Curso':
-            return 'relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight';
-        case 'Conclusão':
-        case 'Em Resolução':
-            return 'relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight';
-        case 'Vigilância':
-            return 'relative inline-block px-3 py-1 font-semibold text-blue-900 leading-tight';
-        default:
-            return 'relative inline-block px-3 py-1 font-semibold text-grey-900 leading-tight';
-    }
-  }
+    const [lastSort, setLastSort] = useState(1);
+    const [district, setDistrict] = useState('all');
+    const [concelho, setConcelho] = useState('all');
 
-  getStatusColor2(status){
-    switch(status){
-        case 'Chegada ao TO':
-        case 'Despacho de 1º Alerta':
-        case 'Despacho':
-            return 'absolute inset-0 bg-yellow-200 opacity-50 rounded-full';
-        case 'Em Curso':
-            return 'absolute inset-0 bg-red-200 opacity-50 rounded-full';
-        case 'Conclusão':
-        case 'Em Resolução':
-            return 'absolute inset-0 bg-green-200 opacity-50 rounded-full';
-        case 'Vigilância':
-            return 'absolute inset-0 bg-blue-200 opacity-50 rounded-full';
-        default:
-            return 'absolute inset-0 bg-grey-200 opacity-50 rounded-full';
-    }
-  }
+    useEffect(() => {
+        dispatch(fetchIncidents());
+        const parsed = queryString.parse(window.location.search);
+        if (parsed.concelho) setConcelho(parsed.concelho);
+    }, [dispatch]);
 
-  sortTable(field){
-    this.props.sortIncidents(field, this.state.lastSort);
-    this.setState({
-        lastSort: -1 * this.state.lastSort
-    })
-  }
+    const distritos = useMemo(
+        () => [...new Set(data.map((i) => i.district).filter(Boolean))].sort(),
+        [data]
+    );
+    const concelhos = useMemo(
+        () => [...new Set(data.map((i) => i.concelho).filter(Boolean))].sort(),
+        [data]
+    );
 
-  districtChange(event){
-    this.setState({district: event.target.value});
-  }
+    const filtered = useMemo(
+        () => data.filter((i) => (
+            (district === 'all' || i.district === district) &&
+            (concelho === 'all' || i.concelho === concelho)
+        )),
+        [data, district, concelho]
+    );
 
-  concelhoChange(event){
-    this.setState({concelho: event.target.value});
-  } 
+    const totals = useMemo(() => filtered.reduce(
+        (acc, i) => ({
+            totalIncidents: acc.totalIncidents + 1,
+            totalMan:       acc.totalMan + (Number(i.man) || 0),
+            totalTerrain:   acc.totalTerrain + (Number(i.terrain) || 0),
+            totalAerial:    acc.totalAerial + (Number(i.aerial) || 0),
+            totalBoat:      acc.totalBoat + (Number(i.meios_aquaticos) || 0),
+        }),
+        { totalIncidents: 0, totalMan: 0, totalTerrain: 0, totalAerial: 0, totalBoat: 0 }
+    ), [filtered]);
 
-  render() {
-    const distritos = this.props.incidents.incidents.map(item => item.district)
-        .filter((value, index, self) => self.indexOf(value) === index);
-
-    distritos.sort();
-
-    const distritosOptions = distritos.map(distrito => (
-        <option value={distrito}>{distrito}</option>
-    ));
-
-    console.log(this.state.totalIncidents);
-
-
-
-    const concelhos = this.props.incidents.incidents.map(item => item.concelho)
-        .filter((value, index, self) => self.indexOf(value) === index);
-
-    concelhos.sort();
-
-    const concelhosOptions = concelhos.map(concelho => (
-        <option value={concelho}>{concelho}</option>
-    ));
-
-    this.state.totalIncidents = 0;
-    this.state.totalMan = 0;
-    this.state.totalTerrain = 0;
-    this.state.totalAerial = 0;
-    this.state.totalBoat = 0;
-
-    const incidents = this.props.incidents.incidents.map(incident => {
-        this.state.totalIncidents += 1;
-        this.state.totalMan += incident.man;
-        this.state.totalTerrain += incident.terrain;
-        this.state.totalAerial += incident.aerial;
-        this.state.totalBoat += incident.meios_aquaticos;
-
-        if( this.state.district !== 'all' && this.state.concelho !== 'all' ){
-
-            if(incident.district !== this.state.district || incident.concelho !== this.state.concelho){
-                return;
-            }
-        } else{
-            if(this.state.district !== 'all' ){
-                if(incident.district !== this.state.district){
-                    return;
-                }
-            } else if(this.state.concelho !== 'all'){
-                if(incident.concelho !== this.state.concelho){
-                    return;
-                }
-            }
-        }
-
-        return (
-        <tr key={incident.id}>
-             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    {incident.date} {incident.hour}
-                </p>
-            </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    <span className={this.getStatusColor(incident.status)}>
-                        <span aria-hidden className={this.getStatusColor2(incident.status)}></span>
-                    <span className="relative">{incident.status}</span></span>
-                </p>
-            </td>
- 	    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    {incident.sub_regiao}
-                </p>
-            </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    {incident.district}
-                </p>
-            </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    {incident.concelho}
-                </p>
-            </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    {incident.freguesia}
-                </p>
-            </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    {incident.localidade}
-                </p>
-            </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    {incident.natureza}
-                </p>
-            </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    {incident.man}
-                </p>
-            </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    {incident.terrain}
-                </p>
-            </td>
-            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    {incident.aerial}
-                </p>
-            </td>
- 	    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">
-                    {incident.meios_aquaticos}
-                </p>
-            </td>
-        </tr>)
-    });
-
+    const sortTable = (field) => {
+        dispatch(sortIncidents(field, lastSort));
+        setLastSort((s) => -1 * s);
+    };
 
     return (
         <div className="shadow-lg mx-auto bg-white mt-24 md:mt-16 w-screen overflow-x-hidden">
             <div className="container md:my-12 mx-auto px-4 md:px-8">
                 <div className="flex flex-wrap -mx-1 lg:-mx-4">
-                    <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/5">
-                        <div
-                            className="overflow-hidden rounded-lg shadow-lg flex md:flex-col items-center md:justify-center p-4 gap-4">
-                            <div className="text-6xl">🚨</div>
-                            <div>
-                                <p className="text-6xl text-grey-darker md:text-center">{this.state.totalIncidents}</p>
-                                <p>Total Ocorrências</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/5">
-                        <div
-                            className="overflow-hidden rounded-lg shadow-lg flex md:flex-col items-center md:justify-center p-4 gap-4">
-                            <div className="text-6xl">👨‍🚒</div>
-                            <div>
-                                <p className="text-6xl text-grey-darker md:text-center">{this.state.totalMan}</p>
-                                <p>Total Operacionais</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/5">
-                        <div
-                            className="overflow-hidden rounded-lg shadow-lg flex md:flex-col items-center md:justify-center p-4 gap-4">
-                            <div className="text-6xl">🚒</div>
-                            <div>
-                                <p className="text-6xl text-grey-darker md:text-center">{this.state.totalTerrain}</p>
-                                <p>Total Veículos</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/5">
-                        <div
-                            className="overflow-hidden rounded-lg shadow-lg flex md:flex-col items-center md:justify-center p-4 gap-4">
-                            <div className="text-6xl">🚁</div>
-                            <div>
-                                <p className="text-6xl text-grey-darker md:text-center">{this.state.totalAerial}</p>
-                                <p>Total Aéreos</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/5">
-                        <div
-                            className="overflow-hidden rounded-lg shadow-lg flex md:flex-col items-center md:justify-center p-4 gap-4">
-                            <div className="text-6xl">🚣</div>
-                            <div>
-                                <p className="text-6xl text-grey-darker md:text-center">{this.state.totalBoat}</p>
-                                <p>Total Aquáticos</p>
-                            </div>
-                        </div>
-                    </div>
+                    <StatCard value={totals.totalIncidents} emoji="🚨" label="Total Ocorrências" />
+                    <StatCard value={totals.totalMan}       emoji="👨‍🚒" label="Total Operacionais" />
+                    <StatCard value={totals.totalTerrain}   emoji="🚒" label="Total Veículos" />
+                    <StatCard value={totals.totalAerial}    emoji="🚁" label="Total Aéreos" />
+                    <StatCard value={totals.totalBoat}      emoji="🚣" label="Total Aquáticos" />
                 </div>
             </div>
 
-             <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-                <div class="text-gray-700 md:flex md:items-center p-4">
-                    <div class="mb-1 md:mb-0 md:w-1/5">
-                        <label for="forms-labelLeftInputCode">Distrito</label>
+            <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                <div className="text-gray-700 md:flex md:items-center p-4">
+                    <div className="mb-1 md:mb-0 md:w-1/5">
+                        <label htmlFor="select-distrito">Distrito</label>
                     </div>
-                    <div class="md:w-4/5 md:flex-grow">
-                         <select className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline" placeholder="Distrito" onChange={this.districtChange.bind(this)}>
+                    <div className="md:w-4/5 md:flex-grow">
+                        <select
+                            id="select-distrito"
+                            className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline"
+                            value={district}
+                            onChange={(e) => setDistrict(e.target.value)}
+                        >
                             <option value="all">Todos</option>
-                            {distritosOptions}
+                            {distritos.map((d) => (
+                                <option key={d} value={d}>{d}</option>
+                            ))}
                         </select>
                     </div>
                 </div>
 
-                <div class="text-gray-700 md:flex md:items-center p-4">
-                    <div class="mb-1 md:mb-0 md:w-1/5">
-                        <label for="forms-labelLeftInputCode">Concelho</label>
+                <div className="text-gray-700 md:flex md:items-center p-4">
+                    <div className="mb-1 md:mb-0 md:w-1/5">
+                        <label htmlFor="select-concelho">Concelho</label>
                     </div>
-                    <div class="md:w-4/5 md:flex-grow">
-                         <select className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline" placeholder="Concelho" onChange={this.concelhoChange.bind(this)}>
+                    <div className="md:w-4/5 md:flex-grow">
+                        <select
+                            id="select-concelho"
+                            className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline"
+                            value={concelho}
+                            onChange={(e) => setConcelho(e.target.value)}
+                        >
                             <option value="all">Todos</option>
-                            {concelhosOptions}
+                            {concelhos.map((c) => (
+                                <option key={c} value={c}>{c}</option>
+                            ))}
                         </select>
                     </div>
                 </div>
             </div>
-          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-				<div className="inline-block min-w-full shadow rounded-lg overflow-x-scroll max-w-full">
-					<table className="min-w-full leading-normal">
-						<thead>
-							<tr>
-                                <th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									<button type="button" onClick={() => this.sortTable('dateTime')}>Início</button>
-								</th>
-                                <th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									<button type="button" onClick={() => this.sortTable('status')}>Estado</button>
-								</th>
-								<th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									<button type="button" onClick={() => this.sortTable('sub_regiao')}>Sub região</button>
-								</th>
-								<th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									<button type="button" onClick={() => this.sortTable('district')}>Distrito</button>
-								</th>
-								<th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    <button type="button" onClick={() => this.sortTable('concelho')}>Concelho</button>
-								</th>
-								<th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    <button type="button" onClick={() => this.sortTable('freguesia')}>Freguesia</button>
-								</th>
-                                <th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									<button type="button" onClick={() => this.sortTable('localidade')}>Localidade</button>
-								</th>
-								<th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									<button type="button" onClick={() => this.sortTable('natureza')}>Natureza</button>
-								</th>
-								<th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									<button type="button" onClick={() => this.sortTable('man')}>👩‍🚒</button>
-								</th>
-                                <th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									<button type="button" onClick={() => this.sortTable('terrain')}>🚒</button>
-								</th>
-                                <th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									<button type="button" onClick={() => this.sortTable('aerial')}>🚁</button>
-								</th>
-								<th
-									className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-									<button type="button" onClick={() => this.sortTable('meios_aquaticos')}>🚣</button>
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-                            {incidents}
+
+            <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                <div className="inline-block min-w-full shadow rounded-lg overflow-x-scroll max-w-full">
+                    <table className="min-w-full leading-normal">
+                        <thead>
+                            <tr>
+                                {COLUMNS.map(({ field, label }) => (
+                                    <th
+                                        key={field}
+                                        className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                                    >
+                                        <button type="button" onClick={() => sortTable(field)}>{label}</button>
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading && (
+                                <tr><td colSpan={COLUMNS.length} className="px-5 py-8 text-center text-gray-500 bg-white">A carregar…</td></tr>
+                            )}
+                            {error && (
+                                <tr><td colSpan={COLUMNS.length} className="px-5 py-8 text-center text-red-600 bg-white">{error}</td></tr>
+                            )}
+                            {!loading && !error && filtered.length === 0 && (
+                                <tr><td colSpan={COLUMNS.length} className="px-5 py-8 text-center text-gray-500 bg-white">Sem ocorrências para os filtros atuais.</td></tr>
+                            )}
+                            {filtered.map((incident) => (
+                                <tr key={incident.id}>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <p className="text-gray-900 whitespace-nowrap">{incident.date} {incident.hour}</p>
+                                    </td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <p className="text-gray-900 whitespace-nowrap">{statusPill(incident.status)}</p>
+                                    </td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm"><p className="text-gray-900 whitespace-nowrap">{incident.sub_regiao}</p></td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm"><p className="text-gray-900 whitespace-nowrap">{incident.district}</p></td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm"><p className="text-gray-900 whitespace-nowrap">{incident.concelho}</p></td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm"><p className="text-gray-900 whitespace-nowrap">{incident.freguesia}</p></td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm"><p className="text-gray-900 whitespace-nowrap">{incident.localidade}</p></td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm"><p className="text-gray-900 whitespace-nowrap">{incident.natureza}</p></td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm"><p className="text-gray-900 whitespace-nowrap">{incident.man}</p></td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm"><p className="text-gray-900 whitespace-nowrap">{incident.terrain}</p></td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm"><p className="text-gray-900 whitespace-nowrap">{incident.aerial}</p></td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm"><p className="text-gray-900 whitespace-nowrap">{incident.meios_aquaticos}</p></td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>
             </div>
-      </div>
+        </div>
     );
-  }
 }
-
-List.propTypes = {
-  fetchIncidents: PropTypes.func.isRequired,
-  incidents: PropTypes.object.isRequired
-};
-
-const mapStateToProps = state => ({
-  incidents: state.incidents,
-});
-
-export default connect(mapStateToProps, { fetchIncidents, sortIncidents })(List);

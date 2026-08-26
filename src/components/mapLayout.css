@@ -78,3 +78,45 @@ html, body, #root { height: 100%; }
     transform: translateY(-0.5px);
     filter: drop-shadow(0 1px 1px rgba(0,0,0,.15));
 }
+
+.map-legend {
+    position: absolute;
+    bottom: 24px;
+    right: 8px;
+    background: rgba(255,255,255,.92);
+    z-index: 1000;
+    border-radius: 8px;
+    padding: 8px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    font-size: 12px;
+    line-height: 1.5;
+}
+.map-legend__row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+.map-legend__row:last-child { margin-bottom: 0; }
+.map-legend__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid rgba(0,0,0,.1);
+}
+
+.map-legend-toggle {
+    position: absolute;
+    bottom: 24px;
+    right: 8px;
+    z-index: 1000;
+    background: rgba(255,255,255,.9);
+    color: #374151;
+    font-size: 1.5rem;
+    padding: 8px 14px;
+    border-radius: 9999px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.15);
+    cursor: pointer;
+}
+.map-legend-toggle:hover { background: rgba(255,255,255,1); }

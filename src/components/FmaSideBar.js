@@ -3,12 +3,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default function FmaSideBar({ incident, onClose }) {
-    const crews    = Array.isArray(incident.crews)    ? incident.crews    : [];
-    const vehicles = Array.isArray(incident.vehicles) ? incident.vehicles : [];
-    const aerials  = Array.isArray(incident.aerials)  ? incident.aerials  : [];
-    const boats    = Array.isArray(incident.boats)    ? incident.boats    : [];
-    const updates  = Array.isArray(incident.updates)  ? incident.updates  : [];
-    const details  = Array.isArray(incident.details)  ? incident.details  : [];
+    const updates = Array.isArray(incident.updates) ? incident.updates : [];
+    const details = Array.isArray(incident.details) ? incident.details : [];
     return (
         <aside className="h-full w-96 shrink-0 border-l border-gray-200 bg-white overflow-y-auto">
             <div className="p-4">

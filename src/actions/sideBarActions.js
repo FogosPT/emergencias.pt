@@ -1,10 +1,6 @@
-// actions/sideBarActions.js
-
-// Usa tipos "namespaced" para evitar colisões
-export const OPEN_SIDEBAR  = 'sidebar/OPEN';
+export const OPEN_SIDEBAR = 'sidebar/OPEN';
 export const CLOSE_SIDEBAR = 'sidebar/CLOSE';
 
-// Normalizador simples
 export const normalizeIncident = (i = {}) => ({
     ...i,
     lat: typeof i.lat === 'number' ? i.lat : Number(i.lat) || null,
@@ -21,14 +17,9 @@ export const normalizeIncident = (i = {}) => ({
     meios_aquaticos: Number(i.meios_aquaticos ?? 0),
 });
 
-// A action creator como thunk para poderes VER o dispatch no console
-export const openSideBar = (incident) => (dispatch) => {
-    const payload = normalizeIncident(incident);
-    console.log('[action] OPEN_SIDEBAR payload:', payload);
-    dispatch({ type: OPEN_SIDEBAR, payload });
-};
+export const openSideBar = (incident) => ({
+    type: OPEN_SIDEBAR,
+    payload: normalizeIncident(incident),
+});
 
-export const closeSideBar = () => (dispatch) => {
-    console.log('[action] CLOSE_SIDEBAR');
-    dispatch({ type: CLOSE_SIDEBAR });
-};
+export const closeSideBar = () => ({ type: CLOSE_SIDEBAR });

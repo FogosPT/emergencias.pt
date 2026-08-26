@@ -1,10 +1,9 @@
-export const FETCH_INCIDENTS = 'FETCH_INCIDENTS';
-export const FETCH_FMA_INCIDENTS = 'FETCH_FMA_INCIDENTS';
-export const SORT_INCIDENTS = 'SORT_INCIDENTS';
+export const FETCH_ALL_PENDING = 'incidents/all/pending';
+export const FETCH_ALL_FULFILLED = 'incidents/all/fulfilled';
+export const FETCH_ALL_REJECTED = 'incidents/all/rejected';
+export const SORT_ALL = 'incidents/all/sort';
 
-export const FETCH_INCIDENT = 'FETCH_INCIDENT';
-
-export const FETCH_FMA_INCIDENTS_ERROR = 'FETCH_FMA_INCIDENTS_ERROR';
-
-export const OPEN_SIDEBAR = 'OPEN_SIDEBAR';
-export const CLOSE_SIDEBAR = 'CLOSE_SIDEBAR';
+export const FETCH_FMA_PENDING = 'incidents/fma/pending';
+export const FETCH_FMA_FULFILLED = 'incidents/fma/fulfilled';
+export const FETCH_FMA_REJECTED = 'incidents/fma/rejected';
+export const SORT_FMA = 'incidents/fma/sort';

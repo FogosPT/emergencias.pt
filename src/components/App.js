@@ -1,38 +1,26 @@
-import React, { Component } from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  useParams,
-  useLocation
-} from "react-router-dom";
-
-import NavBar from './navbar';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from '../store';
+import NavBar from './navbar';
 import List from './List';
-import FMA from "./FMA";
-import FMAMap from "./FMAMap";
-import AllMap from "./AllMap";
+import FMA from './FMA';
+import FMAMap from './FMAMap';
+import AllMap from './AllMap';
 
-class App extends Component {
-  render() {
+export default function App() {
     return (
-      <Provider store={store}>
-        <div className="App flex flex-no-wrap">
-            <NavBar />
-            <Routes>
-              <Route path="/" element={<List />} />
-              <Route path="fma" element={<FMA />} />
-              <Route path="lista" element={<List />} />
-              <Route path="fma-mapa" element={<FMAMap />} />
-              <Route path="mapa" element={<AllMap />} />
-            </Routes>
-          </div>
-      </Provider>
+        <Provider store={store}>
+            <div className="App flex flex-no-wrap">
+                <NavBar />
+                <Routes>
+                    <Route path="/" element={<List />} />
+                    <Route path="fma" element={<FMA />} />
+                    <Route path="lista" element={<List />} />
+                    <Route path="fma-mapa" element={<FMAMap />} />
+                    <Route path="mapa" element={<AllMap />} />
+                </Routes>
+            </div>
+        </Provider>
     );
-  }
 }
-
-export default App;
