@@ -6,6 +6,8 @@ const LINKS = [
     { to: '/mapa',     label: 'Mapa' },
     { to: '/fma',      label: 'FMA' },
     { to: '/fma-mapa', label: 'Mapa FMA' },
+    { to: '/madeira',  label: 'Madeira' },
+    { to: '/madeira-mapa', label: 'Mapa Madeira' },
 ];
 
 export default function NavBar() {

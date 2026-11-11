@@ -26,26 +26,31 @@ Run everything from this directory (`emergencias.pt/`), not from the workspace r
 
 - `build/` — static output (Vite), deployed as-is.
 - `functions/api/v2/incidents/active.js` — Pages Function. Handles `GET /api/v2/incidents/active?...`, forwards the querystring to `https://api.fogos.pt/v2/incidents/active`, adds `X-API-Key: env.FOGOS_API_KEY`, sets `Cache-Control: public, max-age=15, s-maxage=30`. **Secret is configured in the Pages dashboard** (Settings → Environment variables → `FOGOS_API_KEY`, encrypted). Do **not** commit it.
+- `functions/api/v2/madeira/occurrences.js` and `functions/api/v2/madeira/events/current.js` — same shape for the SRPC-RAM (Madeira) endpoints. `occurrences` forwards only `from,to,municipality,parish,nature,limit`; `events/current` forwards no params.
+- Pages Function tests live in `test/functions/` (not under `functions/`, where every file becomes a route).
 - `.nvmrc` — pins Node 20. CF Pages defaults to Node 16 on legacy projects; without this the build fails.
 
 Anything under `functions/` is auto-discovered by Pages — no wrangler config needed. When adding a new upstream endpoint, mirror the URL shape.
 
 ### Routing (`src/components/App.js`)
 
-Five routes under `react-router-dom` v6, wrapped in `<Provider>` and `<BrowserRouter>` (the latter lives in `src/index.js`):
+Seven routes under `react-router-dom` v6, wrapped in `<Provider>` and `<BrowserRouter>` (the latter lives in `src/index.js`):
 
 - `/` and `/lista` → `List`
 - `/mapa` → `AllMap`
 - `/fma` → `FMA`
 - `/fma-mapa` → `FMAMap`
+- `/madeira` → `Madeira` (active SRPC-RAM event summary + last-24 h occurrence list)
+- `/madeira-mapa` → `MadeiraMap` (one marker per parish, approximate location)
 
 ### Redux (`src/store/`)
 
-Redux Toolkit with `configureStore`, three slices:
+Redux Toolkit with `configureStore`, five slices:
 
 - `allIncidents` — feeds `List` and `AllMap` (fetched with `?all=1`)
 - `fmaIncidents` — feeds `FMA` and `FMAMap` (fetched with `?fma=1&all=1`)
 - `sideBar` — `{ open, incident }` for the map side panel
+- `madeiraOccurrences` / `madeiraEvent` — from `createMadeiraSlice` in `src/store/madeiraSlice.js` (`{ data, loading, error, sort }`; the sort is re-applied on refresh). SRPC-RAM occurrences have no status, no exact location (lat/lng = parish centroid, may be absent) and no aerial means — don't reuse the ANEPC status colours for them. `groupByParish()` aggregates them for the map (count = sum of `copies`).
 
 Both incidents slices are produced by a **`createIncidentsSlice(name, query)`** factory in `src/store/incidentsSlice.js`. It returns `{ slice, fetchThunk }`:
 - `slice.reducer` — plug into `configureStore`

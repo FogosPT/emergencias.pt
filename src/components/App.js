@@ -7,6 +7,8 @@ import List from './List.js';
 import FMA from './FMA.js';
 import FMAMap from './FMAMap.js';
 import AllMap from './AllMap.js';
+import Madeira from './Madeira.js';
+import MadeiraMap from './MadeiraMap.js';
 
 export default function App() {
     return (
@@ -19,6 +21,8 @@ export default function App() {
                     <Route path="lista" element={<List />} />
                     <Route path="fma-mapa" element={<FMAMap />} />
                     <Route path="mapa" element={<AllMap />} />
+                    <Route path="madeira" element={<Madeira />} />
+                    <Route path="madeira-mapa" element={<MadeiraMap />} />
                 </Routes>
             </div>
         </Provider>
