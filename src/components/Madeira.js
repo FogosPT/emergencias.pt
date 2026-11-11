@@ -222,8 +222,12 @@ export default function Madeira() {
                         </p>
                     )
                 )}
-                {event.error && !event.data ? (
-                    <p className="rounded-lg bg-red-50 px-4 py-3 text-red-700">Erro ao obter o evento ativo: {event.error}</p>
+                {event.error ? (
+                    <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 mt-3 text-red-700">
+                        {event.data
+                            ? `Não foi possível atualizar o evento ativo: ${event.error}. A mostrar os últimos dados obtidos.`
+                            : `Erro ao obter o evento ativo: ${event.error}`}
+                    </p>
                 ) : null}
 
                 <SectionTitle>Ocorrências nas últimas 24 horas</SectionTitle>
@@ -266,7 +270,11 @@ export default function Madeira() {
                                 <tr><td colSpan={COLUMNS.length} className="px-5 py-8 text-center text-gray-500 bg-white">A carregar…</td></tr>
                             )}
                             {occurrences.error && (
-                                <tr><td colSpan={COLUMNS.length} className="px-5 py-8 text-center text-red-600 bg-white">{occurrences.error}</td></tr>
+                                <tr><td role="alert" colSpan={COLUMNS.length} className="px-5 py-8 text-center text-red-600 bg-white">
+                                    {data.length > 0
+                                        ? `Não foi possível atualizar as ocorrências: ${occurrences.error}. A mostrar os últimos dados obtidos.`
+                                        : occurrences.error}
+                                </td></tr>
                             )}
                             {!showLoading && !occurrences.error && filtered.length === 0 && (
                                 <tr><td colSpan={COLUMNS.length} className="px-5 py-8 text-center text-gray-500 bg-white">Sem ocorrências nas últimas 24 horas.</td></tr>

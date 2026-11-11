@@ -93,7 +93,13 @@ export default function MadeiraMap() {
                 <div className="map-source">{SOURCE_LABEL}</div>
 
                 {loading && <div className="map-banner">A carregar…</div>}
-                {error && <div className="map-banner map-banner--error">{error}</div>}
+                {error && (
+                    <div role="alert" className="map-banner map-banner--error">
+                        {data.length > 0
+                            ? `Não foi possível atualizar: ${error}. A mostrar os últimos dados obtidos.`
+                            : error}
+                    </div>
+                )}
             </div>
         </div>
     );

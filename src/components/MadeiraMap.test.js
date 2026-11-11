@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router-dom';
@@ -10,8 +10,8 @@ const makeStore = () => configureStore({
     reducer: { madeiraOccurrences: madeiraOccurrences.slice.reducer },
 });
 
-const renderMap = () => render(
-    <Provider store={makeStore()}>
+const renderMap = (store = makeStore()) => render(
+    <Provider store={store}>
         <MemoryRouter>
             <MadeiraMap />
         </MemoryRouter>
@@ -49,5 +49,17 @@ describe('<MadeiraMap />', () => {
         expect(screen.getByRole('note')).toHaveTextContent(/Localização aproximada \(freguesia\)/);
         expect(screen.getByRole('note')).toHaveTextContent(/1 sem localização/);
         expect(screen.getByText('Fonte: SRPC, IP-RAM (via Fogos.pt)')).toBeInTheDocument();
+    });
+
+    it('keeps the markers and flags stale data when a refresh fails', async () => {
+        const store = makeStore();
+        const { container } = renderMap(store);
+        await waitFor(() => expect(container.querySelectorAll('.parish-pin')).toHaveLength(2));
+
+        global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 503, json: async () => ({}) });
+        await act(() => store.dispatch(madeiraOccurrences.fetchThunk()));
+
+        expect(container.querySelectorAll('.parish-pin')).toHaveLength(2);
+        expect(screen.getByText(/Não foi possível atualizar: HTTP 503\. A mostrar os últimos dados obtidos/)).toBeInTheDocument();
     });
 });

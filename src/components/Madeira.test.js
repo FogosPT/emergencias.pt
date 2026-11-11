@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor, within, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -14,8 +14,8 @@ const makeStore = () => configureStore({
     },
 });
 
-const renderPage = () => render(
-    <Provider store={makeStore()}>
+const renderPage = (store = makeStore()) => render(
+    <Provider store={store}>
         <MemoryRouter>
             <Madeira />
         </MemoryRouter>
@@ -121,5 +121,31 @@ describe('<Madeira />', () => {
             : { ok: true, json: async () => ({ data: null }) }));
         renderPage();
         expect(await screen.findByText(/HTTP 500/)).toBeInTheDocument();
+    });
+
+    it('keeps the cached event but shows the error when a refresh fails', async () => {
+        mockApi({ event: EVENT, occurrences: OCCURRENCES });
+        const store = makeStore();
+        renderPage(store);
+        expect(await screen.findByRole('heading', { name: EVENT.title })).toBeInTheDocument();
+
+        global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 503, json: async () => ({}) });
+        await act(() => store.dispatch(madeiraEvent.fetchThunk()));
+
+        expect(screen.getByRole('heading', { name: EVENT.title })).toBeInTheDocument();
+        expect(screen.getByText(/Não foi possível atualizar o evento ativo: HTTP 503/)).toBeInTheDocument();
+    });
+
+    it('marks cached occurrences as stale when a refresh fails', async () => {
+        mockApi({ occurrences: OCCURRENCES });
+        const store = makeStore();
+        renderPage(store);
+        expect(await screen.findByText('Queda de Árvore')).toBeInTheDocument();
+
+        global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 503, json: async () => ({}) });
+        await act(() => store.dispatch(madeiraOccurrences.fetchThunk()));
+
+        expect(screen.getByText('Queda de Árvore')).toBeInTheDocument();
+        expect(screen.getByText(/Não foi possível atualizar as ocorrências: HTTP 503\. A mostrar os últimos dados obtidos/)).toBeInTheDocument();
     });
 });
