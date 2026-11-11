@@ -23,6 +23,7 @@ const GLYPHS = {
     explosao: '💥', quimicos: '☣️', biologicos: '🧫',
     toxico: '☠️', combustivel: '🛢️', gas: '🧯',
     resgate: '🆘', pessoas: '🚑', trauma: '🩹', incendio: '🔥',
+    derrocada: '🪨', eletricidade: '⚡',
 };
 
 const GLYPH_RULES = [
@@ -36,6 +37,8 @@ const GLYPH_RULES = [
     [/inunda[cç][aã]o|cheia|enxurrada|galgamento costeiro/,          GLYPHS.inundacao],
     [/ventos|nev[õo]es|tempestade/,                                  GLYPHS.ventos],
     [/sismo|terramoto/,                                              GLYPHS.sismo],
+    [/movimento de massa|deslizamento|derrocada/,                    GLYPHS.derrocada],
+    [/fornecimento el[eé]c?trico|redes? el[eé]c?tric/,               GLYPHS.eletricidade],
     [/queda de [aá]rvore|queda.*elementos/,                          GLYPHS.queda],
     [/explos[aã]o|amea[cç]a de explos[aã]o/,                         GLYPHS.explosao],
     [/qu[ií]micos|mat[eé]rias perigosas|produtos/,                   GLYPHS.quimicos],
@@ -75,5 +78,29 @@ export function makeIncidentIcon(incident = {}) {
         iconAnchor: [36, 36],
         tooltipAnchor: [0, -36],
         popupAnchor: [0, -36],
+    });
+}
+
+/**
+ * Marker for an aggregated parish (Madeira): there is no per-occurrence
+ * status, so it uses a neutral colour, the glyph of the most frequent
+ * nature and a count badge. Size grows with the number of occurrences.
+ */
+export function makeParishIcon({ count = 1, nature = '' } = {}) {
+    const glyph = getGlyphByNaturezaName(nature);
+    const size = Math.round(Math.min(64, 32 + 6 * Math.sqrt(Math.max(0, count - 1))));
+    const html = `
+    <div class="parish-pin" style="width:${size}px;height:${size}px;">
+      <div class="parish-pin-glyph" style="font-size:${Math.round(size * 0.5)}px;">${glyph}</div>
+      <div class="parish-pin-count">${count}</div>
+    </div>
+  `;
+    return L.divIcon({
+        html,
+        className: 'parish-divicon',
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size / 2],
+        tooltipAnchor: [0, -size / 2],
+        popupAnchor: [0, -size / 2],
     });
 }

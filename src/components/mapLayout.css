@@ -120,3 +120,40 @@ html, body, #root { height: 100%; }
     cursor: pointer;
 }
 .map-legend-toggle:hover { background: rgba(255,255,255,1); }
+
+/* Madeira: marcador agregado por freguesia (localização aproximada) */
+.parish-divicon {}
+.parish-pin {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 9999px;
+    background: rgba(37, 99, 235, .85);
+    border: 3px dashed #fff; /* tracejado: localização aproximada */
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+.parish-pin-glyph { line-height: 1; }
+.parish-pin-count {
+    position: absolute; top: -6px; right: -6px;
+    min-width: 22px; height: 22px; padding: 0 5px;
+    border-radius: 9999px;
+    background: #111827; color: #fff;
+    font-size: 12px; font-weight: 700; line-height: 22px; text-align: center;
+}
+.map-note {
+    position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(255,255,255,.95);
+    padding: 4px 10px; border-radius: 6px;
+    font-size: .8125rem; color: #374151;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    max-width: calc(100% - 120px); text-align: center;
+}
+.map-source {
+    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(255,255,255,.9);
+    padding: 2px 8px; border-radius: 6px; font-size: 11px; color: #374151;
+}
+.parish-popup { max-height: 260px; overflow-y: auto; min-width: 220px; }
+.parish-popup ul { margin: 4px 0 0; padding-left: 0; list-style: none; }
+.parish-popup li { padding: 2px 0; border-top: 1px solid #f3f4f6; }

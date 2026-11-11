@@ -8,7 +8,7 @@ const initialState = {
     error: null,
 };
 
-function sortBy(list, field, order) {
+export function sortBy(list, field, order) {
     const sign = order === -1 ? -1 : 1;
     return [...list].sort((a, b) => {
         const av = a?.[field];

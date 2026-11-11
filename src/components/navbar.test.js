@@ -17,6 +17,8 @@ describe('NavBar', () => {
         // desktop links (multiple copies OK: one desktop, one mobile-hidden)
         expect(screen.getAllByRole('link', { name: 'Lista' }).length).toBeGreaterThan(0);
         expect(screen.getAllByRole('link', { name: 'Mapa FMA' }).length).toBeGreaterThan(0);
+        expect(screen.getAllByRole('link', { name: 'Madeira' })[0]).toHaveAttribute('href', '/madeira');
+        expect(screen.getAllByRole('link', { name: 'Mapa Madeira' })[0]).toHaveAttribute('href', '/madeira-mapa');
     });
 
     it('toggles the mobile menu on button click', async () => {
